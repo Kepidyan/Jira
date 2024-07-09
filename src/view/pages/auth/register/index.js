@@ -1,8 +1,9 @@
 import React from "react";
 import { Typography, Input, Button, Divider,Form, notification } from "antd";
-import './index.css';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import{ auth } from '../../../../services/firebase/firebase'
+import './index.css';
+
 const { Title } = Typography;
 
 class Register extends React.Component{
