@@ -1,26 +1,28 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAuth } from 'firebase/auth';
-
+import { initializeApp } from 'firebase/app';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, setDoc, getDoc, doc } from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAnfAVu1_TIJ-iI92AZOuRHGus-OOb2Yn4",
-  authDomain: "my-project-97152-915d0.firebaseapp.com",
-  projectId: "my-project-97152-915d0",
-  storageBucket: "my-project-97152-915d0.appspot.com",
-  messagingSenderId: "253224134094",
-  appId: "1:253224134094:web:2ea4ab2d19666368dd379f",
-  measurementId: "G-5320FFENTB"
+  apiKey: "AIzaSyCyYueOdL2HbB7abr34-1a6xlAxgoaZ_Ck",
+  authDomain: "ardent-time-227417.firebaseapp.com",
+  projectId: "ardent-time-227417",
+  storageBucket: "ardent-time-227417.appspot.com",
+  messagingSenderId: "847111551589",
+  appId: "1:847111551589:web:802936670da35d346c248c",
+  measurementId: "G-T7M3JN9467"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app); 
+
 
 export {
-    app, auth
-};
+    app, auth, db, getFirestore, setDoc, getDoc, doc, onAuthStateChanged
+}
