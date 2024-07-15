@@ -41,7 +41,7 @@ class Register extends React.Component {
         
         const createDoc = doc(db, 'registerUsers', uid);
         setDoc(createDoc, {
-            firstName, lastName, headline
+            firstName, lastName, headline, email
         })
         
         notification.success({

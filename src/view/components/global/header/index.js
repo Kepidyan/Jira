@@ -2,7 +2,8 @@ import { Layout, Button, Typography, Space } from 'antd';
 import UserProfile from '../../shared/UserProfile';
 import './index.css';
 
-const Header = () => {
+const Header = ({ isAuth, userProfileInfo }) => { 
+   
     return (
         <Layout.Header className="main_header">
             <Typography.Title level={3}>
@@ -10,15 +11,17 @@ const Header = () => {
             </Typography.Title>
 
             <Space>
-                <Button>
-                    Login
-                </Button>
+                {
+                    !isAuth && (
+                        <Button>
+                            Login
+                        </Button>
+                    )
+                }
 
-                <Button>
-                    Login
-                </Button>
-
-                <UserProfile />
+                {
+                    isAuth && <UserProfile userProfileInfo={userProfileInfo} />
+                }
             </Space>
         </Layout.Header>
     )
