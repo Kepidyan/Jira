@@ -1,7 +1,8 @@
 import React from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../../services/firebase/firebase';
-import { Typography, Input, Button, Divider, Form, } from 'antd';
+import { Typography, Input, Button, Divider, Form } from 'antd';
+
 
 const { Title } = Typography;
 class Login extends React.Component {
