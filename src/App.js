@@ -1,10 +1,6 @@
 import React from 'react';
-// import Header from './view/components/global/header';
-import MainLayout from './view/layouts/MainLayout';
-import Cabinet from './view/pages/cabinet/index';
-import CabinetLayout from './view/layouts/CabinetLayout';
-import Login from './view/pages/auth/login';
-import Register from './view/pages/auth/register';
+import { MainLayout, CabinetLayout } from './view/layouts';
+import { Login, Register } from './view/pages/auth';
 import LoadingWrapper from './view/components/shared/LoadingWrapper';
 import { db, auth, doc, getDoc, onAuthStateChanged } from './services/firebase/firebase';
 import {  
@@ -17,13 +13,13 @@ import './App.css';
 
 const route = createBrowserRouter(
   createRoutesFromElements(
-    <Route path='/' element={<MainLayout />}>
-        <Route path='login' element={<Login />}/>
-        <Route path='register' element={<Register />}/>
+    <Route path="/" element={<MainLayout />}>
+        <Route path="login" element={<Login />}/>
+        <Route path="register" element={<Register />}/>
 
-        <Route path='/cabinet' element={<CabinetLayout />}>
-          <Route path='/cabinet' element={<Cabinet />}/>
-        </Route>
+        <Route path="cabinet" element={<CabinetLayout />}>
+
+        </Route>  
     </Route>
   )
 )
@@ -40,9 +36,7 @@ class App extends React.Component {
         headline: '',
         email: ''
       },
-
     }
-
   }
 
 
@@ -88,7 +82,6 @@ class App extends React.Component {
     )
   }
 }
-
 
 
 export default App;
