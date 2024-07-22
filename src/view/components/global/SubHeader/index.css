@@ -1,0 +1,9 @@
+.sub_header{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search_input{
+    width: 200px;
+}
