@@ -1,59 +1,70 @@
-import { Input, Avatar, Button, Divider } from "antd"
-import { PlusOutlined } from '@ant-design/icons'
-import { useState } from "react"
-import CreatIssueModal from "../../shared/CreateIssueModal"
-import './index.css'
+import { useState } from 'react';
+import { Input, Avatar, Button, Divider } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import CreateIssueModal from '../../shared/CreateIssueModal';
+import './index.css';
 
 const SubHeader = () => {
-    const [modalVisible, setModalVisible] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false);
     
     const handleOpenModal = () => {
-        setModalVisible(true)
+        setModalVisible(true);
     }
 
-    return(
+    return (
         <div className="sub_header">
             <Input.Search 
-                className="search_input"
-                placeholder="search"
+                className="serach_input"
+                placeholder="Search"
             />
+
             <Divider type="vertical"/>
-            <Avatar.Group
+            
+            <Avatar.Group 
                 max={{
                     count: 4,
-                    style: {color: '#f56a00', backgroundColor: '#fde3cf', cursor: 'pointer'},
+                    style: { color: '#f56a00', backgroundColor: '#fde3cf', cursor: 'pointer' },
                     popover: {
                         trigger: 'hover'
                     }
                 }}
             >
-
-                <Avatar style={{backgroundColor: 'Green'}}>
+                <Avatar style={{backgroundColor: 'green'}}>
                     DS
                 </Avatar>
 
-                <Avatar style={{backgroundColor: 'Indigo'}}>
-                    AK
+                <Avatar style={{backgroundColor: 'indigo'}}>
+                    KA
                 </Avatar>
 
+                <Avatar style={{backgroundColor: 'red'}}>
+                    DD
+                </Avatar>
+
+                <Avatar style={{backgroundColor: 'blue'}}>
+                    AD
+                </Avatar>
+
+                <Avatar style={{backgroundColor: 'blue'}}>
+                    AD
+                </Avatar>
             </Avatar.Group>
 
             <Divider type="vertical"/>
-            
+
             <Button 
-                type="primary" 
-                icon={<PlusOutlined/>}
+                type="primary" icon={<PlusOutlined />}
                 onClick={handleOpenModal}
             >
-                Creat Issue
+                Create issue
             </Button>
 
-            <CreatIssueModal 
+            <CreateIssueModal 
                 visible={modalVisible}
                 setVisible={setModalVisible}
             />
         </div>
     )
-}
+};
 
-export default SubHeader
+export default SubHeader;
