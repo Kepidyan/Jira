@@ -10,31 +10,30 @@ const issueTypes = [
     {
         value: 'story',
         label: 'Story',
-    }
+    },
 ];
 
 const priority = [
     {
-        value : 'highest',
-        label : 'Highest'
+        value: 'high',
+        label: 'High'
     },
     {
-        value : 'high',
-        label : 'High'
+        value: 'highest',
+        label: 'Highest'
     },
     {
-        value : 'medium',
-        label : 'Medium'
+        value: 'medium',
+        label: 'Medium'
     },
     {
-        value : 'low',
-        label : 'Low'
+        value: 'low',
+        label: 'Low'
     },
     {
-        value : 'lowest',
-        label : 'Lowest'
-    },
-
+        value: 'lowest',
+        label: 'Lowest'
+    }
 ]
 
 export {

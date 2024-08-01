@@ -1,6 +1,7 @@
 import { useState } from 'react';
+
 import { Button, Menu } from 'antd';
-import { DatabaseOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
+import { DatabaseOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons'
 
 const items = [
     {
@@ -11,36 +12,37 @@ const items = [
     {
         key: 'projectSettings',
         label: 'Project Settings',
-        icon: <SettingOutlined />,
+        icon: <SettingOutlined />
     },
     {
         key: 'teams',
         label: 'Teams',
         icon: <TeamOutlined />
     }
-  ];
-  
-const Sidebar = () => {
-    const [collapsed, setCollapsed] = useState(true);
+];
 
+const Sidebar = () => {
+    const [collapsed, setCollapsed] = useState(true); 
+    
     const handleChangeCollapsed = () => {
         setCollapsed(!collapsed);
     }
 
-    return(
+    return (
         <div className="sidebar">
-        <Button onClick={handleChangeCollapsed}>
-            {
-                collapsed ? 'close' : 'open'
-            }
-        </Button>
-        <Menu 
-          items={items}
-          mode="inline"
-          inlineCollapsed={collapsed}
-        /> 
-    </div>
+            <Button onClick={handleChangeCollapsed}>
+                {
+                    collapsed ? 'open' : 'close'
+                }
+            </Button>
+            <Menu 
+                items={items}
+                mode="inline"
+                inlineCollapsed={collapsed}
+            />
+        </div>
     )
-}
+};
 
-export default Sidebar
+
+export default Sidebar;
