@@ -1,88 +1,88 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../../services/firebase/firebase';
-import { Typography, Input, Button, Divider, Form, Flex } from 'antd';
+import { Typography, Input, Button, Divider, Form, Flex, notification } from 'antd';
 import AuthWrapper from '../../../components/shared/AuthWrapper';
 import LoginCoverImg from '../../../../core/images/loginCover.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
-class Login extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            email: '',
-            password: '',
-            loading: false
-        }
-    }
 
-    handleFormChange = (value) => {
-        this.setState(value);
-    };
+const Login = () => {
 
-    handleLogin = async () => {
-        this.setState({
-            loading: true
-        });
+    const [loading,setLoading] = useState(false);
+    const [form] = Form.useForm();
+    const navigate = useNavigate()
 
-        const { email, password } = this.state;
+    const handleLogin = async(values) => {
+        setLoading(true)
         try{
-            const response = await signInWithEmailAndPassword(auth, email, password);
-            console.log(response, 'response');
-        }catch(error) {
-            console.log(error, '>>>>>>');
-
+            const { email, password } = values
+            await signInWithEmailAndPassword(auth, email, password);
+            navigate('/cabinet')
+        }catch (error){
+            notification.error({
+                message:'Error',
+                description:'Invalid login credentials'
+            })
         }finally{
-            this.setState({
-                loading: false
-            });
+            setLoading(false)
         }
     }
-    
-    render() {
-        return (
-            <AuthWrapper coverImg={LoginCoverImg}>
-                <Title level={3}>
-                    Sign In
-                </Title>
+    return(
+        <AuthWrapper coverImg={LoginCoverImg}>
+            <Title level={3}>
+                Sign In
+            </Title>
 
-                <Form onValuesChange={this.handleFormChange} layout="vertical">
-                    <Form.Item name="email" label="Email">
-                        <Input 
-                            type="text"
-                            placeholder="Email"
-                        />
-                    </Form.Item>
+            <Form form={form} onFinish={handleLogin} layout="vertical">
+                <Form.Item 
+                    name="email" label="Email"
+                    rules={[{
+                        required: true,
+                        message:'Please input your email!'
+                    }]}
+                    >
+                    <Input 
+                        type="text"
+                        placeholder="Email"
+                    />
+                </Form.Item>
 
-                    <Form.Item name="password" label="Password">
-                        <Input.Password
-                            placeholder="Password"
-                        />
-                    </Form.Item>
+                <Form.Item 
+                    name="password" label="Password"
+                    rules={[{
+                        required: true,
+                        message:'Password required!'
+                    }]}
+                    >
+                    <Input.Password
+                        placeholder="Password"
+                    />
+                </Form.Item>
 
-                    <Divider />
-                    
-                    <Flex justify="space-between" align="flex-end">
-                        <Text underline>
-                            <Link to="/register">
-                                Create Account
-                            </Link>
-                        </Text>
+                <Divider />
+            
+                <Flex justify="space-between" align="flex-end">
+                    <Text underline>
+                        <Link to="/register">
+                            Create Account
+                        </Link>
+                    </Text>
 
-                        <Button 
-                            type="primary"
-                            loading={this.state.loading}
-                            onClick={this.handleLogin}
-                        >
-                            Login
-                        </Button>
-                    </Flex>
-                    
-                </Form>
-            </AuthWrapper>
-        )
-    }
+                    <Button 
+                        type="primary"
+                        loading={loading}
+                        htmlType='submit'
+                    >
+                        Login
+                    </Button>
+                </Flex>
+        </Form>
+    </AuthWrapper>
+    )
 }
+
+
 
 export default Login;
