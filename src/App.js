@@ -1,8 +1,9 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { MainLayout, CabinetLayout } from './view/layouts';
 import { Login, Register } from './view/pages/auth';
 import LoadingWrapper from './view/components/shared/LoadingWrapper';
 import { db, auth, doc, getDoc, onAuthStateChanged } from './services/firebase/firebase';
+import { AuthContextProvider } from './context/AuthContext';
 import {  
   Route, 
   RouterProvider,
@@ -22,67 +23,53 @@ const route = createBrowserRouter(
         </Route>  
     </Route>
   )
-)
-
-class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      loading: false,
-      isAuth: false,
-      userProfileInfo: {
-        firstName: '',
-        lastName: '',
-        headline: '',
-        email: ''
-      },
-    }
-  }
+);
 
 
-  componentDidMount() { 
-    this.setState({
-      loading: true
-    });
+const App = () => {
+  const [isAuth, setIsAuth] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [userProfileInfo, setUserProfileInfo] = useState({
+    firstName: '',
+    lastName: '',
+    headline: '',
+    email: ''
+  });
+
+  useEffect(() => {
+    setLoading(true);
     
     onAuthStateChanged(auth, (user) => { 
-      this.setState({
-        loading: false
-      });
+      setLoading(false)
 
       if (user) {
-          this.setState({
-            isAuth: true
-          });
-
+        setIsAuth(true);
           const { uid } = user;
           const ref = doc(db, 'registerUsers', uid);
 
           getDoc(ref).then((userData) => {
             if (userData.exists()) {
-              this.setState({
-                userProfileInfo: userData.data() 
-              })
+              setUserProfileInfo(userData.data()) 
             }
           })
       } else {
 
       }
-
     })
-  }
+  }, [])
 
-  render() {
-    const { userProfileInfo, loading, isAuth } = this.state;
-
-    return (
+  return (
+    <>
+   
       <LoadingWrapper loading={loading} fullScreen>
-        <RouterProvider router={route}/>
+        <AuthContextProvider value={{ isAuth, userProfileInfo, setIsAuth }}>
+          <RouterProvider router={route}/>
+        </AuthContextProvider>
       </LoadingWrapper>
-    )
-  }
-}
-
+    </>
+  
+  )
+};
 
 export default App;
 

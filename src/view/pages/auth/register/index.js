@@ -11,22 +11,21 @@ import './index.css';
 const { Title, Text } = Typography;
 
 const Register = () => {
-    const navigate = useNavigate()
-    const [form] = Form.useForm()
-    const [loading, setLoading]= useState(false)
+    const [ form ] = Form.useForm();
+    const navigate = useNavigate();
+    const [ loading, setLoading ] = useState(false);
 
     const handleRegister = async (values) => {
         setLoading(true);
-        try{
-            const { email, password,...restData } = values
-            const response = await createUserWithEmailAndPassword(auth,email,password)
-            const uid = response.user.uid; 
+        try {
+            const { email, password, ...restData } = values;
+            const response = await createUserWithEmailAndPassword(auth, email, password);
+            const uid = response.user.uid;
             const createDoc = doc(db, 'registerUsers', uid);
-
             await setDoc(createDoc, {
                 email, ...restData
-            })
-            navigate('/login')
+            });
+            navigate('/login');
         }catch{
             notification.error({
                 message: 'Wrong Registration',
@@ -35,107 +34,115 @@ const Register = () => {
         }finally{
             setLoading(false);
         }
-        
     }
 
-    return(
+    return (
         <AuthWrapper coverImg={registerCoverImg}>
-                <Title level={2}>
-                    Register
-                </Title>
+            <Title level={2}>
+                Register
+            </Title>
 
-                <Form form={form}  onFinish={handleRegister} layout="vertical">
-                    <Form.Item 
-                        label="First Name"
-                        name="firstName"
-                        rules={[{
+            <Form form={form} onFinish={handleRegister} layout="vertical">
+                <Form.Item
+                    name="firstName"
+                    label="First Name"
+                    rules={[
+                        {
                             required: true,
-                            message:'First Name is required !'
-                        }]}
-                    >
-                        <Input 
-                            type="text"
-                            placeholder="First Name"
-                        />
-                    </Form.Item>
+                            message: 'First Name is required!'
+                        }
+                    ]}
+                >
+                    <Input 
+                        type="text"
+                        placeholder="First Name"
+                    />
+                </Form.Item>
 
-                    <Form.Item 
-                        label="Last Name"
-                        name="lastName"
-                        rules={[{
+                <Form.Item 
+                    name="lastName"
+                    label="Last Name" 
+                    rules={[
+                        {
                             required: true,
-                            message:'Last Name is required !'
-                        }]}
-                    >
-                        <Input 
-                            type="text"
-                            placeholder="Last Name"
-                        />
-                    </Form.Item>
+                            message: 'Last Name is required!'
+                        }
+                    ]}
+                >
+                    <Input 
+                        type="text"
+                        placeholder="Last Name"
+                    />
+                </Form.Item>
 
-                    <Form.Item 
-                        label="Headline"
-                        name="headline"
-                        rules={[{
+                <Form.Item 
+                    name="headline"
+                    label="Headline" 
+                    rules={[
+                        {
                             required: true,
-                            message:'Headline is required !'
-                        }]}
-                    >
-                        <Input 
-                            type="text"
-                            placeholder="Headline"
-                        />
-                    </Form.Item>
+                            message: 'Headline is required!'
+                        }
+                    ]}
+                >
+                    <Input 
+                        type="text"
+                        placeholder="Headline"
+                    />
+                </Form.Item>
 
-                    <Form.Item 
-                        label="Email"
-                        name="email"
-                        rules={[{
+                <Form.Item 
+                    name="email"
+                    label="Email" 
+                    rules={[
+                        {
                             required: true,
-                            message:'Email is required !'
-                        }]}
-                    >
-                        <Input 
-                            type="email"
-                            placeholder="Email"
-                        />
-                    </Form.Item>
+                            message: 'Email is required!'
+                        }
+                    ]}
+                >
+                    <Input 
+                        type="email"
+                        placeholder="Email"
+                    />
+                </Form.Item>
 
-                    <Form.Item 
-                        label="Password" 
-                        name="password"
-                        rules={[{
+                <Form.Item 
+                    name="password"
+                    label="Password" 
+                    rules={[
+                        {
                             required: true,
-                            message:'Password is required !'
-                        }]}
+                            message: 'Password is required!'
+                        }
+                    ]}
+                >
+                    <Input.Password
+                        placeholder="Password"
+                    />
+                </Form.Item>
+
+                <Divider />
+
+                <Flex justify="space-between" align="flex-end">
+                    <Text underline>
+                        <Link to="/login">
+                            Sign In
+                        </Link>
+                    </Text>
+                
+                    <Button
+                        type="primary" 
+                        loading={loading}
+                        htmlType="submit"
                     >
-                        <Input.Password
-                            placeholder="Password"
-                        />
-                    </Form.Item>
-
-                    <Divider />
-
-                    <Flex justify="space-between" align="flex-end">
-                        <Text underline>
-                            <Link to="/login">
-                                Sign In
-                            </Link>
-                        </Text>
-                     
-                        <Button
-                            type="primary" 
-                            loading={loading}
-                            htmlType='submit'
-                        >
-                            Register
-                        </Button>
-                    </Flex>
-                </Form>
-            </AuthWrapper>
+                        Register
+                    </Button>
+                </Flex>
+            </Form>
+        </AuthWrapper>
     )
-}
-
+};
 
 export default Register;
 
