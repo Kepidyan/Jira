@@ -1,18 +1,20 @@
 import { useState } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
-import { issueTypes, priority } from '../../../../core/constants/issue';
+import { Modal, Form, Input, Select, notification } from 'antd';
+import { issueTypes, priority, taskStatus } from '../../../../core/constants/issue';
 import Editor from '../Editor';
-import { doc, setDoc, db } from '../../../../services/firebase/firebase';
+import { doc, setDoc, db, updateDoc, arrayUnion } from '../../../../services/firebase/firebase';
 
-const CreateIssueModal = ({ visible, setVisible }) => {
+const CreateIssueModal = ({ visible, setVisible, users }) => { //render
     const [ form ] = Form.useForm();
-
-    const [formValues, setFormValues] = useState({
-        issueType: '',
-        shortSummary: '',
-    })
-
+   
     const [confirmLoading, setConfirmLoading] = useState(false);
+
+    const handleUpdateAssigneesTask = async (taskId, assignerId) => {
+        const docRef = doc(db, 'registerUsers', assignerId);
+        await updateDoc(docRef, {
+            task: arrayUnion(taskId)
+        })
+    };
 
     const handleCloseModal = () => {
         setVisible(false);
@@ -20,14 +22,29 @@ const CreateIssueModal = ({ visible, setVisible }) => {
     }
 
     const handleCreateIssue = async (values) => {
+        const taskId = `${Date.now()}`;
         setConfirmLoading(true);
+
+        const taskDataModel = {
+            key: taskId,
+            status: taskStatus.TODO.key,
+            ...values
+        }
+     
         try{
-            const createDoc = doc(db, 'issue', `${Date.now()}`);
-            await setDoc(createDoc, values);
+            const createDoc = doc(db, 'issue', taskId);
+            await setDoc(createDoc, taskDataModel);
+            await handleUpdateAssigneesTask(taskId, values.assignees)
+            notification.success({
+                message: 'Your task has been created',
+            });
+
             setVisible(false);
             form.resetFields();
         }catch(error) {
-
+            notification.error({
+                message: 'Error ooops :(',
+            });
         }finally{
             setConfirmLoading(false);
         }
@@ -43,6 +60,13 @@ const CreateIssueModal = ({ visible, setVisible }) => {
             confirmLoading={confirmLoading}
             onCancel={handleCloseModal}
             onOk={form.submit}
+            styles={{
+                body: {
+                    maxHeight: '600px',
+                    overflowY: 'auto',
+                    overflowX: 'hidden'
+                }
+            }}
         >
             <Form layout="vertical" form={form} onFinish={handleCreateIssue}>
                 <Form.Item
@@ -73,6 +97,30 @@ const CreateIssueModal = ({ visible, setVisible }) => {
                     rules={[{required: true, message: 'Please Input Description!'}]}
                 >
                     <Editor />
+                </Form.Item>
+
+                <Form.Item
+                    name="reporter"
+                    label="Reporter"
+                    rules={[{required: true, message: 'Please Select Reporter!'}]}
+                >
+                    <Select 
+                        showSearch
+                        placeholder="Reporter"
+                        options={users}
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    name="assignees"
+                    label="Assignees"
+                    rules={[{required: true, message: 'Please Select Assignees!'}]}
+                >
+                    <Select 
+                        showSearch
+                        placeholder="Assignees"
+                        options={users}
+                    />
                 </Form.Item>
 
                 <Form.Item
