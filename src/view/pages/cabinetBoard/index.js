@@ -1,54 +1,83 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { taskStatus } from '../../../core/constants/issue';
-import { db, getDocs, collection } from '../../../services/firebase/firebase';
-import { Typography } from 'antd';
+import { db, updateDoc, doc } from '../../../services/firebase/firebase';
+import { Typography, Flex } from 'antd';
+import LoadingWrapper  from '../../components/shared/LoadingWrapper'
 import './index.css';
+import { AuthContext } from '../../../context/AuthContext';
+import {ISSUE_OPTION, PRIORITY_OPTION } from '../../../core/constants/issue'
 
-const { Title } = Typography;
-
-const taskStatusModel = {
-    [taskStatus.TODO.key]: {
-        name: taskStatus.TODO.title,
-        items: [],
-    },
-    [taskStatus.IN_PROGRESS.key]: {
-        name: taskStatus.IN_PROGRESS.title,
-        items: [],
-    },
-    [taskStatus.TEST.key]: {
-        name: taskStatus.TEST.title,
-        items: [],
-    },
-    [taskStatus.DONE.key]: {
-        name: taskStatus.DONE.title,
-        items: []
-    }
-};
+const { Title, Text } = Typography;
 
 const CabinetBoard = () => {
-    const [columns, setColumns] = useState(taskStatusModel); 
+    const { columns, issuesLoading, handleGetIssues, setColumns } = useContext(AuthContext)
 
     useEffect(() => {
-        const handleGetIssues = async () => {
-            const queryData = await getDocs(collection(db, 'issue')); //fetch();
-            queryData.docs.map(doc => {
-                const data = doc.data();
-                const { status } = data;
-                taskStatusModel[status].items.push(data);
-            })
-
-            setColumns({...taskStatusModel});
-        };
-
         handleGetIssues();
     }, []);
-const handleChangeTaskStatus = result => {
-    console.log(result, '....');
+
+    const handleDragEnnd = (result) => {
+    
+        const  { source, destination } = result
+        const sourceColumn = columns[source.droppableId]
+        const destColumn = columns[destination.droppableId]
+
+        const sourceItems = [...sourceColumn.items]
+        const destItems = [...destColumn.items]
+
+        const [removed] = sourceItems.splice(source.index, 1)
+        destItems.splice(destination.index, 0, removed)
+
+        if(source.droppableId !== destination.droppableId){
+            setColumns({
+                ...columns,
+                [source.droppableId]:{
+                    ...sourceColumn,
+                    items: sourceItems
+                },
+                [destination.droppableId]:{
+                    ...destColumn,
+                    items: destItems
+                }
+            })
+        }else {
+            const sourceColumn = columns[source.droppableId];
+            const sourceColumnItems = sourceColumn.items;
+            const [removed] = sourceColumnItems.splice(source.index, 1)
+            sourceColumnItems.splice(destination.index, 0, removed)
+
+            setColumns({
+                ...columns,
+                [source.droppableId]:{
+                    ...sourceColumn,
+                    items: sourceColumnItems
+                }
+            })
+        }
+
+}
+
+const handleChangeTaskStatus = async result => {
+
+    if(result.destination){
+        try{
+            handleDragEnnd(result)
+            const { destination: {droppableId, index} , draggableId } = result;
+            const docRef = doc(db, 'issue', draggableId);
+            await updateDoc(docRef, {
+                status: droppableId,
+                index
+            })
+        }catch{
+            console.log('error');
+        }
+    }
+
 }
 
     return (
         <div className="drag_context_container">
+            <LoadingWrapper loading={issuesLoading}>
             <DragDropContext onDragEnd={handleChangeTaskStatus}>
                 {
                     Object.entries(columns).map(([columnId, column]) => {
@@ -69,6 +98,7 @@ const handleChangeTaskStatus = result => {
                                                 <div
                                                     {...provided.droppableProps}
                                                     ref={provided.innerRef}
+                                                    className="droppable_container"
                                                     style={{
                                                         padding: 6,
                                                         minHeight: 600,
@@ -96,7 +126,22 @@ const handleChangeTaskStatus = result => {
                                                                                         ...provided.draggableProps.style,
                                                                                     }}
                                                                                 >
-                                                                                    {item.shortSummary}
+                                                                                
+                                                                                    
+                                                                                        <Text>
+                                                                                            {item.shortSummary}
+                                                                                        </Text>
+                                                                                    <Flex justify='space-between'>
+                                                                                        <div>
+                                                                                            {ISSUE_OPTION[item.issueType].icon}
+                                                                                            
+                                                                                            {PRIORITY_OPTION[item.priority].icon}
+                                                                                        </div>
+
+                                                                                        <div>
+
+                                                                                        </div>
+                                                                                    </Flex>
                                                                                 </div>
                                                                             )
                                                                         }
@@ -116,6 +161,7 @@ const handleChangeTaskStatus = result => {
                     })
                 }
             </DragDropContext>
+            </LoadingWrapper>
         </div>
     )
 };
